@@ -8,6 +8,7 @@ class HomeController extends Controller
 {
     public function farmerDashboard()
     {
-        return view('farmer_dashboard'); // This must match your .blade.php filename
+        // This renders the page where your new form lives
+        return view('farmer_dashboard');
     }
 }
