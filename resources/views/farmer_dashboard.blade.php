@@ -14,4 +14,14 @@
             </div>
         </div>
     </div>
+
+    use App\Http\Controllers\Farmer\ProductController;
+
+Route::middleware(['auth', 'user-role:farmer'])->group(function () {
+    Route::get('/farmer/dashboard', [HomeController::class, 'farmerDashboard'])->name('farmer.dashboard');
+    
+    // Add this line to handle the form submission
+    Route::post('/farmer/products', [ProductController::class, 'store'])->name('farmer.products.store');
+});
+
 </x-app-layout>
