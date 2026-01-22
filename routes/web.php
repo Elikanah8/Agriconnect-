@@ -9,10 +9,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Default Dashboard (Buyer)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified', 'user-role:buyer'])->name('dashboard');
+/// New way - calls the HomeController to fetch your Nduma listings
+Route::get('/dashboard', [HomeController::class, 'buyerDashboard'])
+    ->middleware(['auth', 'verified', 'user-role:buyer'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -37,3 +37,6 @@ Route::middleware(['auth', 'user-role:transporter'])->group(function () {
         return view('transporter_dashboard');
     })->name('transporter.dashboard');
 });
+
+// Ensure this points to the HomeController or a BuyerController
+Route::get('/buyer/dashboard', [HomeController::class, 'buyerDashboard'])->name('buyer.dashboard');
