@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Farmer;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\Product; // This tells the controller to use your Model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function store(Request $request)
     {
-        // 1. Validation: Ensures the image isn't too large
+        // 1. Validation
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
@@ -22,6 +22,7 @@ class ProductController extends Controller
         // 2. Handle the Image Upload
         $imagePath = null;
         if ($request->hasFile('image')) {
+            // Stores image in storage/app/public/products
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
