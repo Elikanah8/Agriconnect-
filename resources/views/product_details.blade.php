@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <x-app-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -30,19 +31,18 @@
                         </div>
 
                         @if($product->user->phone)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $product->user->phone) }}" 
-                                target="_blank"
-                                class="block text-center bg-green-500 text-white py-4 rounded-lg font-bold hover:bg-green-600 transition shadow-lg text-lg">
-                                💬 Contact Farmer via WhatsApp
-                            </a>
-                        @else
-                            <div class="block text-center bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg border-2 border-red-800">
-                                ⚠️ NO PHONE NUMBER PROVIDED
-                            </div>
-                            <p class="text-red-600 text-sm text-center mt-2 font-bold animate-pulse">
-                                Farmer profile is incomplete!
-                            </p>
-                        @endif
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $product->user->phone) }}" 
+                        target="_blank"
+                            class="flex items-center justify-center gap-3 w-full bg-[#25D366] text-white py-4 rounded-lg font-bold hover:bg-[#128C7E] transition shadow-lg text-lg">
+                                <i class="fa-brands fa-whatsapp text-2xl"></i> 
+                                        Contact Farmer via WhatsApp
+                                    </a>
+@else
+    <div class="flex items-center justify-center gap-3 w-full bg-red-600 text-white py-4 rounded-lg font-bold shadow-lg border-2 border-red-800">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        NO PHONE NUMBER PROVIDED
+    </div>
+@endif
                         
                         <a href="{{ route('dashboard') }}" class="block text-center text-gray-500 mt-8 hover:text-gray-800 transition font-medium">
                             ← Back to Marketplace
