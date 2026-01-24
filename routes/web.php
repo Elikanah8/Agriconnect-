@@ -38,5 +38,8 @@ Route::middleware(['auth', 'user-role:transporter'])->group(function () {
     })->name('transporter.dashboard');
 });
 
-// Ensure this points to the HomeController or a BuyerController
+// Ensure this points to the HomeController
 Route::get('/buyer/dashboard', [HomeController::class, 'buyerDashboard'])->name('buyer.dashboard');
+
+// FIXED LINE: Use the short class name since you already have the 'use' statement at the top
+Route::get('/products/{product}', [HomeController::class, 'showProduct'])->name('products.show');

@@ -30,8 +30,8 @@
                         <p class="text-green-700 font-bold text-xl">{{ number_format($product->price, 0) }} KES</p>
                         <p class="text-sm text-gray-500 mb-4">Stock: {{ $product->quantity }} units</p>
                         
-                        <a href="{{ route('products.show', $product->id) }}" 
-    class="block text-center w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-semibold transition">
+                        <a href="{{ route('products.show', $product->id) }}"
+    class="block text-center w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 font-semibold transition">
     View Details
 </a>
                     </div>
