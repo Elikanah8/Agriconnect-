@@ -16,12 +16,21 @@ class HomeController extends Controller
         return view('farmer_dashboard', compact('products'));
     }
 
-    // --- BUYER LOGIC (Now inside the class!) ---
+    // --- BUYER LOGIC ---
     public function buyerDashboard()
     {
         // The buyer needs to see ALL products available for sale
         $products = Product::latest()->get();
 
         return view('buyer_dashboard', compact('products'));
+    }
+
+    // --- NEW: PRODUCT DETAILS LOGIC ---
+    public function showProduct(Product $product)
+    {
+        // 'load' gets the info of the farmer (user) who owns the product
+        $product->load('user'); 
+        
+        return view('product_details', compact('product'));
     }
 }

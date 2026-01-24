@@ -19,7 +19,7 @@
                     <div class="w-full h-48 bg-gray-100"> 
                         @if($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" 
-                                 class="w-full h-full object-cover object-center">
+                                class="w-full h-full object-cover object-center">
                         @else
                             <div class="w-full h-full flex items-center justify-center text-gray-400 font-bold text-xs">NO PHOTO</div>
                         @endif
@@ -30,9 +30,10 @@
                         <p class="text-green-700 font-bold text-xl">{{ number_format($product->price, 0) }} KES</p>
                         <p class="text-sm text-gray-500 mb-4">Stock: {{ $product->quantity }} units</p>
                         
-                        <button class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-semibold transition">
-                            View Details
-                        </button>
+                        <a href="{{ route('products.show', $product->id) }}" 
+    class="block text-center w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-semibold transition">
+    View Details
+</a>
                     </div>
                 </div>
                 @endforeach
