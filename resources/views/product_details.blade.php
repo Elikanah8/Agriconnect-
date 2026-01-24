@@ -22,12 +22,24 @@
                             <p class="text-lg font-semibold">{{ $product->user->name }}</p>
                         </div>
 
-                        <a href="https://wa.me/{{ $product->user->phone ?? '' }}" class="block text-center bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition">
-                            Contact Farmer via WhatsApp
+                        @if($product->user->phone)
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $product->user->phone) }}" 
+                                target="_blank"
+                                class="block text-center bg-green-500 text-white py-3 rounded-lg font-bold hover:bg-green-600 transition shadow-md">
+                                Contact Farmer via WhatsApp
+                            </a>
+                        @else
+                            <div class="block text-center bg-gray-300 text-gray-700 py-3 rounded-lg font-bold cursor-not-allowed">
+                                No WhatsApp Number Provided
+                            </div>
+                        @endif
+                        
+                        <a href="{{ route('dashboard') }}" class="block text-center text-gray-500 mt-4 hover:underline">
+                            ← Back to Marketplace
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout> // farmer dashboard
+</x-app-layout>
