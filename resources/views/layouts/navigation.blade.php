@@ -22,11 +22,13 @@
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                                 <div class="flex items-center">
                                     @if(Auth::user()->avatar)
-                                        <div class="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-gray-200 shadow-sm me-2">
-                                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="h-full w-full object-cover">
+                                        <div class="rounded-full overflow-hidden me-2 border border-gray-200 shadow-sm" 
+                                             style="height: 32px !important; width: 32px !important; min-width: 32px !important; flex-shrink: 0 !important;">
+                                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                                 style="width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important;">
                                         </div>
                                     @else
-                                        <div class="h-8 w-8 shrink-0 rounded-full bg-green-100 flex items-center justify-center me-2 text-green-700 font-bold border border-green-200 text-xs">
+                                        <div class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center me-2 text-green-700 font-bold border border-green-200 text-xs">
                                             {{ substr(Auth::user()->name, 0, 1) }}
                                         </div>
                                     @endif
@@ -86,14 +88,17 @@
             @auth
                 <div class="flex items-center px-4">
                     @if(Auth::user()->avatar)
-                        <div class="h-10 w-10 shrink-0 rounded-full overflow-hidden me-3 border border-gray-200 shadow-sm">
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="h-full w-full object-cover">
+                        <div class="rounded-full overflow-hidden me-3 border border-gray-200 shadow-sm" 
+                             style="height: 40px !important; width: 40px !important; min-width: 40px !important; flex-shrink: 0 !important;">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                                 style="width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important;">
                         </div>
                     @else
                         <div class="h-10 w-10 shrink-0 rounded-full bg-green-100 flex items-center justify-center me-3 text-green-700 font-bold border border-green-200">
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
                     @endif
+
                     <div>
                         <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
                         <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
