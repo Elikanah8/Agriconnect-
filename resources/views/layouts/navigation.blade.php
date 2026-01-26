@@ -20,7 +20,18 @@
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                                <div class="flex items-center">
+                                    @if(Auth::user()->avatar)
+                                        <div class="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-gray-200 shadow-sm me-2">
+                                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="h-full w-full object-cover">
+                                        </div>
+                                    @else
+                                        <div class="h-8 w-8 shrink-0 rounded-full bg-green-100 flex items-center justify-center me-2 text-green-700 font-bold border border-green-200 text-xs">
+                                            {{ substr(Auth::user()->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div>{{ Auth::user()->name }}</div>
+                                </div>
 
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -73,9 +84,20 @@
 
         <div class="pt-4 pb-1 border-t border-gray-200">
             @auth
-                <div class="px-4">
-                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                <div class="flex items-center px-4">
+                    @if(Auth::user()->avatar)
+                        <div class="h-10 w-10 shrink-0 rounded-full overflow-hidden me-3 border border-gray-200 shadow-sm">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="h-full w-full object-cover">
+                        </div>
+                    @else
+                        <div class="h-10 w-10 shrink-0 rounded-full bg-green-100 flex items-center justify-center me-3 text-green-700 font-bold border border-green-200">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                    @endif
+                    <div>
+                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                        <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    </div>
                 </div>
 
                 <div class="mt-3 space-y-1">
@@ -91,11 +113,6 @@
                             {{ __('Log Out') }}
                         </x-responsive-nav-link>
                     </form>
-                </div>
-            @else
-                <div class="px-4 space-y-1">
-                    <x-responsive-nav-link :href="route('login')">Log in</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('register')">Register</x-responsive-nav-link>
                 </div>
             @endauth
         </div>
