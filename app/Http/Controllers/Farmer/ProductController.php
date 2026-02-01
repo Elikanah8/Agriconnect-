@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // Added for image management
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -15,6 +15,7 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string', // Added validation
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
@@ -28,6 +29,7 @@ class ProductController extends Controller
         Product::create([
             'user_id' => Auth::id(),
             'name' => $request->name,
+            'category' => $request->category, // Added this line
             'description' => $request->description,
             'price' => $request->price,
             'quantity' => $request->quantity,
@@ -37,10 +39,9 @@ class ProductController extends Controller
         return back()->with('success', 'Product listed successfully!');
     }
 
-    // --- EDIT LOGIC (This was missing!) ---
+    // --- EDIT LOGIC ---
     public function edit(Product $product)
     {
-        // Check if the product belongs to the logged-in farmer
         if (Auth::id() !== $product->user_id) {
             abort(403, 'Unauthorized access');
         }
@@ -48,7 +49,7 @@ class ProductController extends Controller
         return view('products.edit', compact('product'));
     }
 
-    // --- UPDATE LOGIC (This was missing!) ---
+    // --- UPDATE LOGIC ---
     public function update(Request $request, Product $product)
     {
         if (Auth::id() !== $product->user_id) {
@@ -57,17 +58,17 @@ class ProductController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string', // Added validation
             'description' => 'required',
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $data = $request->only(['name', 'description', 'price', 'quantity']);
+        // Included category in the allowed update fields
+        $data = $request->only(['name', 'category', 'description', 'price', 'quantity']);
 
-        // Handle new image upload
         if ($request->hasFile('image')) {
-            // Delete the old photo if it exists
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -79,14 +80,13 @@ class ProductController extends Controller
         return redirect()->route('dashboard')->with('success', 'Product updated successfully!');
     }
 
-    // --- DELETE LOGIC (This was missing!) ---
+    // --- DELETE LOGIC ---
     public function destroy(Product $product)
     {
         if (Auth::id() !== $product->user_id) {
             abort(403);
         }
 
-        // Clean up the storage folder
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
