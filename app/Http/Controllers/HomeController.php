@@ -7,10 +7,6 @@ use App\Models\Product;
 
 class HomeController extends Controller
 {
-    /**
-     * Main entry point after login.
-     * Redirects users to their specific dashboard based on role.
-     */
     public function index()
     {
         $role = auth()->user()->role;
@@ -29,17 +25,28 @@ class HomeController extends Controller
     // --- FARMER LOGIC ---
     public function farmerDashboard()
     {
-        // Fetch products belonging ONLY to the logged-in farmer
         $products = Product::where('user_id', auth()->id())->latest()->get();
-
         return view('farmer_dashboard', compact('products'));
     }
 
-    // --- BUYER LOGIC ---
-    public function buyerDashboard()
+    // --- BUYER LOGIC (UPDATED FOR SEARCH) ---
+    public function buyerDashboard(Request $request) // Added Request $request
     {
-        // The buyer needs to see ALL products available for sale
-        $products = Product::latest()->get();
+        // Start a query but don't "get" the results yet
+        $query = Product::query();
+
+        // If the buyer typed something in the search box
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // If the buyer picked a category from the dropdown
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Now finalize the query and get the products
+        $products = $query->latest()->get();
 
         return view('buyer_dashboard', compact('products'));
     }
@@ -47,9 +54,7 @@ class HomeController extends Controller
     // --- PRODUCT DETAILS LOGIC ---
     public function showProduct(Product $product)
     {
-        // 'load' gets the info of the farmer (user) who owns the product
         $product->load('user'); 
-        
         return view('product_details', compact('product'));
     }
 }
