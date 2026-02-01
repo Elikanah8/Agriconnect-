@@ -7,6 +7,25 @@ use App\Models\Product;
 
 class HomeController extends Controller
 {
+    /**
+     * Main entry point after login.
+     * Redirects users to their specific dashboard based on role.
+     */
+    public function index()
+    {
+        $role = auth()->user()->role;
+
+        if ($role === 'farmer') {
+            return redirect()->route('farmer.dashboard');
+        } elseif ($role === 'buyer') {
+            return redirect()->route('buyer.dashboard');
+        } elseif ($role === 'transporter') {
+            return redirect()->route('transporter.dashboard');
+        }
+
+        return redirect('/');
+    }
+
     // --- FARMER LOGIC ---
     public function farmerDashboard()
     {
@@ -25,7 +44,7 @@ class HomeController extends Controller
         return view('buyer_dashboard', compact('products'));
     }
 
-    // --- NEW: PRODUCT DETAILS LOGIC ---
+    // --- PRODUCT DETAILS LOGIC ---
     public function showProduct(Product $product)
     {
         // 'load' gets the info of the farmer (user) who owns the product
