@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Order; // Ensure this is imported
+use App\Models\Order;
+use App\Models\User;
 
 class HomeController extends Controller
 {
+    /**
+     * Main redirect logic based on User Role.
+     */
     public function index()
     {
         $role = auth()->user()->role;
@@ -23,14 +27,25 @@ class HomeController extends Controller
         return redirect('/');
     }
 
-    // --- FARMER LOGIC ---
+    /**
+     * FARMER LOGIC: View own products and incoming orders.
+     */
     public function farmerDashboard()
     {
         $products = Product::where('user_id', auth()->id())->latest()->get();
-        return view('farmer_dashboard', compact('products'));
+        
+        // Orders where the product belongs to this farmer
+        $orders = Order::where('farmer_id', auth()->id())
+                       ->with(['product', 'buyer'])
+                       ->latest()
+                       ->get();
+
+        return view('farmer_dashboard', compact('products', 'orders'));
     }
 
-    // --- BUYER LOGIC (SEARCH & FILTER) ---
+    /**
+     * BUYER LOGIC: Search products and view marketplace.
+     */
     public function buyerDashboard(Request $request)
     {
         $query = Product::query();
@@ -48,22 +63,24 @@ class HomeController extends Controller
         return view('buyer_dashboard', compact('products'));
     }
 
-    // --- PRODUCT DETAILS ---
+    /**
+     * PRODUCT DETAILS: View single product info.
+     */
     public function showProduct(Product $product)
     {
         $product->load('user'); 
         return view('product_details', compact('product'));
     }
 
-    // --- ORDER LOGIC (Added inside the class) ---
+    /**
+     * ORDER LOGIC: Allow buyers to place an order.
+     */
     public function placeOrder(Request $request, Product $product)
     {
-        // 1. Validate that the buyer isn't buying more than what is available
         $request->validate([
             'quantity' => 'required|integer|min:1|max:' . $product->quantity,
         ]);
 
-        // 2. Create the order in the database
         Order::create([
             'product_id' => $product->id,
             'buyer_id' => auth()->id(),
@@ -73,7 +90,20 @@ class HomeController extends Controller
             'status' => 'pending',
         ]);
 
-        // 3. Redirect back with a success message for the UI
         return back()->with('success', 'Order placed successfully! The farmer has been notified.');
     }
-} // This is the closing bracket for the Class - keep everything above it!
+
+    /**
+     * TRANSPORTER LOGIC: View orders that are 'accepted' and ready for delivery.
+     */
+    public function transporterDashboard()
+    {
+        // Transporters see orders that are accepted by the farmer but not yet delivered
+        $availableJobs = Order::where('status', 'accepted')
+                              ->with(['product', 'buyer', 'farmer'])
+                              ->latest()
+                              ->get();
+
+        return view('transporter_dashboard', compact('availableJobs'));
+    }
+}

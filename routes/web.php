@@ -29,21 +29,23 @@ Route::middleware(['auth', 'user-role:farmer'])->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // NEW: Route for farmer to accept an order
+    Route::post('/orders/{order}/accept', [HomeController::class, 'acceptOrder'])->name('orders.accept');
 });
 
 // --- BUYER ROUTES ---
 Route::middleware(['auth', 'user-role:buyer'])->group(function () {
     Route::get('/buyer/dashboard', [HomeController::class, 'buyerDashboard'])->name('buyer.dashboard');
     
-    // NEW: Route to handle placing the order
+    // Route to handle placing the order
     Route::post('/order/store/{product}', [HomeController::class, 'placeOrder'])->name('orders.store');
 });
 
 // --- TRANSPORTER ROUTES ---
 Route::middleware(['auth', 'user-role:transporter'])->group(function () {
-    Route::get('/transporter/dashboard', function () {
-        return view('transporter_dashboard');
-    })->name('transporter.dashboard');
+    // FIXED: Corrected syntax to point to controller
+    Route::get('/transporter/dashboard', [HomeController::class, 'transporterDashboard'])->name('transporter.dashboard');
 });
 
 // Publicly accessible product view
