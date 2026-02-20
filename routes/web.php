@@ -1,4 +1,4 @@
-\<?php
+<?php
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -25,7 +25,7 @@ Route::middleware(['auth', 'user-role:farmer'])->group(function () {
     Route::get('/farmer/dashboard', [HomeController::class, 'farmerDashboard'])->name('farmer.dashboard');
     Route::post('/farmer/products', [ProductController::class, 'store'])->name('farmer.products.store');
     
-    // MOVED THESE HERE: Only farmers should access these
+    // Management routes for products
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
@@ -34,6 +34,9 @@ Route::middleware(['auth', 'user-role:farmer'])->group(function () {
 // --- BUYER ROUTES ---
 Route::middleware(['auth', 'user-role:buyer'])->group(function () {
     Route::get('/buyer/dashboard', [HomeController::class, 'buyerDashboard'])->name('buyer.dashboard');
+    
+    // NEW: Route to handle placing the order
+    Route::post('/order/store/{product}', [HomeController::class, 'placeOrder'])->name('orders.store');
 });
 
 // --- TRANSPORTER ROUTES ---
@@ -43,6 +46,7 @@ Route::middleware(['auth', 'user-role:transporter'])->group(function () {
     })->name('transporter.dashboard');
 });
 
+// Publicly accessible product view
 Route::get('/products/{product}', [HomeController::class, 'showProduct'])->name('products.show');
 
 require __DIR__.'/auth.php';

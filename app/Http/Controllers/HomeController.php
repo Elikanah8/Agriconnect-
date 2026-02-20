@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product; 
+use App\Models\Product;
+use App\Models\Order; // Ensure this is imported
 
 class HomeController extends Controller
 {
@@ -29,32 +30,50 @@ class HomeController extends Controller
         return view('farmer_dashboard', compact('products'));
     }
 
-    // --- BUYER LOGIC (UPDATED FOR SEARCH) ---
-    public function buyerDashboard(Request $request) // Added Request $request
+    // --- BUYER LOGIC (SEARCH & FILTER) ---
+    public function buyerDashboard(Request $request)
     {
-        // Start a query but don't "get" the results yet
         $query = Product::query();
 
-        // If the buyer typed something in the search box
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // If the buyer picked a category from the dropdown
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        // Now finalize the query and get the products
         $products = $query->latest()->get();
 
         return view('buyer_dashboard', compact('products'));
     }
 
-    // --- PRODUCT DETAILS LOGIC ---
+    // --- PRODUCT DETAILS ---
     public function showProduct(Product $product)
     {
         $product->load('user'); 
         return view('product_details', compact('product'));
     }
-}
+
+    // --- ORDER LOGIC (Added inside the class) ---
+    public function placeOrder(Request $request, Product $product)
+    {
+        // 1. Validate that the buyer isn't buying more than what is available
+        $request->validate([
+            'quantity' => 'required|integer|min:1|max:' . $product->quantity,
+        ]);
+
+        // 2. Create the order in the database
+        Order::create([
+            'product_id' => $product->id,
+            'buyer_id' => auth()->id(),
+            'farmer_id' => $product->user_id,
+            'quantity' => $request->quantity,
+            'total_price' => $product->price * $request->quantity,
+            'status' => 'pending',
+        ]);
+
+        // 3. Redirect back with a success message for the UI
+        return back()->with('success', 'Order placed successfully! The farmer has been notified.');
+    }
+} // This is the closing bracket for the Class - keep everything above it!
