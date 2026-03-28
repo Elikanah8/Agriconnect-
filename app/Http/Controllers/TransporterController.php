@@ -14,7 +14,6 @@ class TransporterController extends Controller
     public function dashboard()
     {
         // 1. Available Gigs: Orders with no transporter yet.
-        // We use 'with' to fetch related product and buyer info for the UI.
         $availableOrders = Order::whereNull('transporter_id')
                                 ->where('status', 'pending')
                                 ->with(['product', 'buyer']) 
@@ -22,7 +21,7 @@ class TransporterController extends Controller
 
         // 2. My Active Jobs: Orders ALREADY claimed by this driver.
         $myActiveJobs = Order::where('transporter_id', Auth::id())
-                             ->where('status', '!=', 'delivered')
+                             ->where('status', 'accepted')
                              ->with(['product', 'buyer'])
                              ->get();
 
@@ -30,7 +29,7 @@ class TransporterController extends Controller
     }
 
     /**
-     * Claim an order for delivery.
+     * Step 1: Claim an order for delivery.
      */
     public function acceptOrder($id)
     {
@@ -41,12 +40,30 @@ class TransporterController extends Controller
             return back()->with('error', 'Sorry, this order has already been claimed!');
         }
 
-        // Assign the current logged-in user as the transporter
         $order->update([
             'transporter_id' => Auth::id(),
             'status' => 'accepted' 
         ]);
 
-        return back()->with('success', 'Order #'.$id.' accepted! Delivery details are now in your Active Jobs.');
+        return back()->with('success', 'Order #' . $id . ' accepted! Get moving!');
+    }
+
+    /**
+     * Step 2: Mark delivery as finished.
+     */
+    public function completeOrder($id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Security Check: Ensure only the assigned driver can complete the order
+        if ($order->transporter_id != Auth::id()) {
+            return back()->with('error', 'Unauthorized action.');
+        }
+
+        $order->update([
+            'status' => 'delivered'
+        ]);
+
+        return back()->with('success', 'Great job! Delivery confirmed and marked as complete.');
     }
 }

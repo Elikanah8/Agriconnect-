@@ -44,6 +44,7 @@ Route::middleware(['auth', 'user-role:buyer'])->group(function () {
     
     // 3. Updated route name to 'order.place' to match our earlier discussion
     Route::post('/order/place/{product}', [BuyerController::class, 'placeOrder'])->name('order.place');
+    Route::post('/orders/{id}/complete', [TransporterController::class, 'completeOrder'])->name('orders.complete');
 });
 
 // --- TRANSPORTER ROUTES ---

@@ -39,7 +39,7 @@
                                 <td class="p-3 border text-center">
                                     <form action="{{ route('orders.accept', $order->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded transition">
+                                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded transition shadow-sm">
                                             Accept Job
                                         </button>
                                     </form>
@@ -61,6 +61,7 @@
                             <th class="p-3 border">Product</th>
                             <th class="p-3 border">Status</th>
                             <th class="p-3 border">Customer</th>
+                            <th class="p-3 border text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,9 +75,17 @@
                                     </span>
                                 </td>
                                 <td class="p-3 border">{{ $job->buyer->name }}</td>
+                                <td class="p-3 border text-center">
+                                    <form action="{{ route('orders.complete', $job->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded transition shadow-sm">
+                                            Mark Delivered
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="p-4 text-center text-gray-500 italic">You haven't accepted any jobs yet.</td></tr>
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500 italic">You haven't accepted any jobs yet.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
