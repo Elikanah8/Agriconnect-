@@ -3,7 +3,8 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Farmer\ProductController;
-use App\Http\Controllers\TransporterController; // Import the new controller
+use App\Http\Controllers\TransporterController;
+use App\Http\Controllers\BuyerController; // 1. IMPORT THE NEW BUYER CONTROLLER
 use Illuminate\Support\Facades\Route;
 
 // --- PUBLIC ROUTES ---
@@ -36,12 +37,13 @@ Route::middleware(['auth', 'user-role:farmer'])->group(function () {
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
 
-// --- BUYER ROUTES ---
+// --- BUYER ROUTES (Organized) ---
 Route::middleware(['auth', 'user-role:buyer'])->group(function () {
-    Route::get('/buyer/dashboard', [HomeController::class, 'buyerDashboard'])->name('buyer.dashboard');
+    // 2. Pointing to BuyerController now
+    Route::get('/buyer/dashboard', [BuyerController::class, 'index'])->name('buyer.dashboard');
     
-    // Route to handle placing the order
-    Route::post('/order/store/{product}', [HomeController::class, 'placeOrder'])->name('orders.store');
+    // 3. Updated route name to 'order.place' to match our earlier discussion
+    Route::post('/order/place/{product}', [BuyerController::class, 'placeOrder'])->name('order.place');
 });
 
 // --- TRANSPORTER ROUTES ---
