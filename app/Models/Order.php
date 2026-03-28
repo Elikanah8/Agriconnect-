@@ -13,6 +13,7 @@ class Order extends Model
         'product_id', 
         'buyer_id', 
         'farmer_id', 
+        'transporter_id', // CRITICAL: Added this so the Transporter can "Accept"
         'quantity', 
         'total_price', 
         'status'
@@ -34,5 +35,11 @@ class Order extends Model
     public function farmer() 
     {
         return $this->belongsTo(User::class, 'farmer_id');
+    }
+
+    // Relationship to the transporter who claimed the delivery
+    public function transporter() 
+    {
+        return $this->belongsTo(User::class, 'transporter_id');
     }
 }

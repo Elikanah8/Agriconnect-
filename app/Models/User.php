@@ -14,21 +14,18 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role',
-        'phone'
+        'phone',
+        'avatar' // Added this based on your migrations earlier
     ];
 
     /**
      * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -37,11 +34,18 @@ class User extends Authenticatable
 
     /**
      * The attributes that should be cast.
-     *
-     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * HELPER METHOD: This allows your middleware to check roles.
+     * Use this in your presentation to show how security is handled.
+     */
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
 }

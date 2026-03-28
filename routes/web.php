@@ -3,13 +3,18 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Farmer\ProductController;
+use App\Http\Controllers\TransporterController; // Import the new controller
 use Illuminate\Support\Facades\Route;
 
+// --- PUBLIC ROUTES ---
 Route::get('/', function () {
     return view('welcome');
 });
 
-// FIXED: The main dashboard route should handle ALL roles
+// Publicly accessible product view
+Route::get('/products/{product}', [HomeController::class, 'showProduct'])->name('products.show');
+
+// --- SHARED AUTH ROUTES ---
 Route::get('/dashboard', [HomeController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -29,9 +34,6 @@ Route::middleware(['auth', 'user-role:farmer'])->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-
-    // NEW: Route for farmer to accept an order
-    Route::post('/orders/{order}/accept', [HomeController::class, 'acceptOrder'])->name('orders.accept');
 });
 
 // --- BUYER ROUTES ---
@@ -44,11 +46,11 @@ Route::middleware(['auth', 'user-role:buyer'])->group(function () {
 
 // --- TRANSPORTER ROUTES ---
 Route::middleware(['auth', 'user-role:transporter'])->group(function () {
-    // FIXED: Corrected syntax to point to controller
-    Route::get('/transporter/dashboard', [HomeController::class, 'transporterDashboard'])->name('transporter.dashboard');
+    // Dashboard to see available gigs
+    Route::get('/transporter/dashboard', [TransporterController::class, 'dashboard'])->name('transporter.dashboard');
+    
+    // Logic for transporter to claim a delivery
+    Route::post('/orders/{id}/accept', [TransporterController::class, 'acceptOrder'])->name('orders.accept');
 });
-
-// Publicly accessible product view
-Route::get('/products/{product}', [HomeController::class, 'showProduct'])->name('products.show');
 
 require __DIR__.'/auth.php';
